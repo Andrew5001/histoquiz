@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Chronology — Jobs Edition</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Modern SF-style font -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  padding: 24px;
+  background: #f5f5f7;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color: #1d1d1f;
+  display: flex;
+  justify-content: center;
+}
+
+/* MAIN WRAPPER */
+.app-shell {
+  width: 100%;
+  max-width: 780px;
+  background: #ffffff;
+  border-radius: 24px;
+  padding: 32px 30px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+}
+
+/* HEADER */
+.header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0;
+  color: #111;
+}
+
+.subtitle {
+  margin-top: 8px;
+  font-size: 1.05rem;
+  color: #6e6e73;
+}
+
+.date-line {
+  margin-top: 16px;
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+/* EVENTS */
+.events {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.event-card {
+  background: #ffffff;
+  border: 1px solid #e5e5ea;
+  border-radius: 18px;
+  padding: 22px 20px;
+  box-shadow: 0 6px 14px rgba(0,0,0,0.03);
+}
+
+.event-text {
+  font-size: 1.05rem;
+  line-height: 1.55;
+  margin-bottom: 14px;
+}
+
+.event-footer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px 20px;
+  align-items: center;
+}
+
+.year-label {
+  font-size: 0.95rem;
+  color: #555;
+}
+
+.year-input {
+  width: 120px;
+  padding: 9px 14px;
+  border-radius: 12px;
+  border: 1px solid #d2d2d7;
+  font-size: 1rem;
+  text-align: center;
+  background: #fafafa;
+}
+
+.year-input:focus {
+  outline: none;
+  border-color: #007aff;
+  box-shadow: 0 0 0 3px rgba(0,122,255,0.25);
+  background: #ffffff;
+}
+
+.feedback {
+  font-size: 0.9rem;
+  color: #d60000;
+  min-height: 1.2em;
+}
+
+/* BUTTON */
+.actions {
+  margin-top: 28px;
+  text-align: center;
+}
+
+.btn-main {
+  padding: 14px 32px;
+  border: none;
+  border-radius: 14px;
+  background: #007aff;
+  color: white;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+  box-shadow: 0 6px 12px rgba(0,122,255,0.25);
+}
+
+.btn-main:hover {
+  background: #0063cc;
+}
+
+#shareInfo {
+  margin-top: 12px;
+  color: #666;
+  font-size: 0.95rem;
+}
+
+/* MODAL */
+#resultModal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.3);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 20;
+}
+
+.modal-window {
+  background: #ffffff;
+  border-radius: 24px;
+  padding: 26px 28px;
+  max-width: 380px;
+  width: 90%;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.25);
+  text-align: center;
+}
+
+.modal-title {
+  margin: 0;
+  font-weight: 700;
+  font-size: 1.6rem;
+  padding-bottom: 6px;
+  color: #111;
+}
+
+.modal-body {
+  font-size: 1.05rem;
+  color: #1d1d1f;
+}
+
+.emoji-row {
+  font-size: 1.7rem;
+  margin: 10px 0;
+}
+
+.per-event {
+  margin-top: 16px;
+  font-size: 1rem;
+  text-align: left;
+}
+
+/* MODAL BUTTONS */
+.modal-buttons {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.modal-btn {
+  padding: 12px 18px;
+  border-radius: 12px;
+  border: none;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.modal-btn.primary {
+  background: #34c759;
+  color: #fff;
+  box-shadow: 0 6px 14px rgba(52,199,89,0.3);
+}
+
+.modal-btn.secondary {
+  background: #f2f2f7;
+  color: #444;
+  border: 1px solid #dedede;
+}
+
+/* MOBILE TWEAK */
+@media (max-width: 600px){
+  .app-shell { padding: 20px; }
+  .event-card { padding: 18px; }
+}
+</style>
+</head>
+
+<body>
+
+<div class="app-shell">
+  <header class="header">
+    <h1 class="title">Chronology</h1>
+    <p class="subtitle">A pure timeline challenge for history minds</p>
+    <p class="date-line">Today: <span id="dateDisplay"></span></p>
+  </header>
+
+  <div id="events" class="events"></div>
+
+  <div class="actions">
+    <button id="checkBtn" class="btn-main">Check answers</button>
+    <div id="shareInfo"></div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div id="resultModal">
+  <div class="modal-window">
+    <h2 class="modal-title">Your Results</h2>
+    <div id="modalBody" class="modal-body"></div>
+
+    <div class="modal-buttons">
+      <button id="sharePopupBtn" class="modal-btn primary">Share score</button>
+      <button id="closeModal" class="modal-btn secondary">Close</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* DOM hooks */
+const eventsContainer = document.getElementById("events");
+const dateDisplay = document.getElementById("dateDisplay");
+const checkBtn = document.getElementById("checkBtn");
+const shareInfo = document.getElementById("shareInfo");
+
+const resultModal = document.getElementById("resultModal");
+const modalBody = document.getElementById("modalBody");
+const sharePopupBtn = document.getElementById("sharePopupBtn");
+const closeModalBtn = document.getElementById("closeModal");
+
+let currentEvents = [];
+let perEventDiffs = [];
+let lastScore = 0;
+let lastTotalError = 0;
+let lastEmojiRow = "";
+let currentDate = new Date();
+
+/* Utilities */
+function pad2(n){ return String(n).padStart(2,"0"); }
+function formatDateLabel(d){
+  return d.toLocaleDateString(undefined,{month:"long",day:"numeric"});
+}
+function escapeHTML(str){
+  return str.replace(/</g,"&lt;").replace(/>/g,"&gt;");
+}
+function stripLeadingYear(text, yr){
+  return text.replace(new RegExp("^" + yr + "\\s*[–-]?\\s*"), "");
+}
+function isMobile(){
+  return /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
+}
+
+/* Quantile selection */
+function selectQuantiles(events, n){
+  if(events.length <= n) return events.slice();
+  const step = events.length / n;
+  let out = [];
+  for(let i=0;i<n;i++){
+    let idx = Math.floor(i * step + step/2);
+    if(idx >= events.length) idx = events.length - 1;
+    out.push(events[idx]);
+  }
+  return out;
+}
+
+/* Load events */
+async function loadEventsForToday(){
+  const m = pad2(currentDate.getMonth()+1);
+  const d = pad2(currentDate.getDate());
+  dateDisplay.textContent = formatDateLabel(currentDate);
+
+  const res = await fetch(
+    `https://en.wikipedia.org/api/rest_v1/feed/onthisday/events/${m}/${d}`
+  );
+  const data = await res.json();
+
+  let events = (data.events || []).filter(e =>
+    e.year >= 1700 && e.year <= 2020 && e.text
+  );
+
+  events.sort((a,b)=>a.year - b.year);
+  currentEvents = selectQuantiles(events, 8);
+  renderEvents();
+}
+
+/* Render */
+function renderEvents(){
+  eventsContainer.innerHTML = currentEvents.map((ev,i)=>`
+    <div class="event-card">
+      <div class="event-text">${escapeHTML(stripLeadingYear(ev.text, ev.year))}</div>
+      <div class="event-footer">
+        <span class="year-label">Year:</span>
+        <input class="year-input" maxlength="4" inputmode="numeric" data-index="${i}">
+        <div class="feedback" id="fb-${i}"></div>
+      </div>
+    </div>
+  `).join("");
+
+  document.querySelectorAll(".year-input").forEach(inp=>{
+    inp.addEventListener("input",()=>{
+      inp.value = inp.value.replace(/[^0-9]/g,"");
+      if(inp.value.length === 4){
+        let next = document.querySelector(
+          `.year-input[data-index="${Number(inp.dataset.index)+1}"]`
+        );
+        if(next) next.focus();
+      }
+    });
+  });
+}
+
+/* Check Answers */
+function checkAnswers(){
+  perEventDiffs = [];
+  let inputs = document.querySelectorAll(".year-input");
+
+  let score = 0;
+  let totalErr = 0;
+  let emojis = [];
+
+  inputs.forEach(inp=>{
+    const idx = Number(inp.dataset.index);
+    const fb = document.getElementById("fb-" + idx);
+    const guess = Number(inp.value);
+    const correct = currentEvents[idx].year;
+
+    fb.textContent = "";
+    let diff = 0;
+    let emoji = "⬜";
+
+    if(!guess){
+      diff = 100;
+      fb.textContent = `It was ${correct} (100+ years off)`;
+    } else if(guess === correct){
+      score++;
+      emoji = "🟩";
+    } else {
+      diff = Math.abs(guess - correct);
+      emoji = diff <= 25 ? "🟨" : "⬜";
+      fb.textContent = `It was ${correct} — ${diff} years off`;
+    }
+
+    perEventDiffs.push(diff);
+    totalErr += diff;
+    emojis.push(emoji);
+  });
+
+  lastScore = score;
+  lastTotalError = totalErr;
+  lastEmojiRow = emojis.join("");
+
+  let breakdown = perEventDiffs.map((d,i)=>
+    `<div>Event ${i+1}: ${d} years off</div>`
+  ).join("");
+
+  modalBody.innerHTML = `
+    <div><strong>Score:</strong> ${score}/8</div>
+    <div class="emoji-row">${lastEmojiRow}</div>
+    <div><strong>Total:</strong> ${totalErr} years off</div>
+    <div class="per-event">${breakdown}</div>
+  `;
+
+  resultModal.style.display = "flex";
+}
+
+/* Share */
+sharePopupBtn.onclick = ()=>{
+  const breakdown = perEventDiffs
+    .map((d,i)=>`Event ${i+1}: ${d} years off`)
+    .join("\n");
+
+  const text =
+`Chronology — Jobs Edition
+${formatDateLabel(currentDate)}
+Score: ${lastScore}/8
+${lastEmojiRow}
+Total years off: ${lastTotalError}
+
+${breakdown}`;
+
+  if(navigator.share && isMobile()){
+    navigator.share({ text });
+  } else {
+    navigator.clipboard.writeText(text);
+    shareInfo.textContent = "Results copied!";
+  }
+};
+
+/* Modal Close */
+closeModalBtn.onclick = ()=> resultModal.style.display = "none";
+
+/* Enter key */
+document.addEventListener("keydown",e=>{
+  if(e.key==="Enter") checkAnswers();
+});
+
+/* Start */
+checkBtn.onclick = checkAnswers;
+loadEventsForToday();
+</script>
+
+</body>
+</html>
